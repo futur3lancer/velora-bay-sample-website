@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
+import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 
 const links = [
   { href: "#accommodations", label: "Accommodations" },
@@ -25,11 +26,18 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.overflow = open ? "hidden" : "";
-    document.body.style.overflow = open ? "hidden" : "";
+    // Only lock while the drawer is actually open. Locking/unlocking here
+    // used to run unconditionally on every mount and write directly to
+    // `body.style.overflow` — the same property the intro Loader writes
+    // to independently, which caused the two to stomp on each other and
+    // could leave the page's scroll lock in the wrong state, especially
+    // on mobile where `overflow: hidden` alone doesn't reliably stop
+    // touch scrolling (see lib/scrollLock.ts).
+    if (!open) return;
+
+    lockScroll();
     return () => {
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [open]);
 

@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 
 export default function Loader({ onDone }: { onDone: () => void }) {
   const root = useRef<HTMLDivElement>(null);
   const mark = useRef<HTMLDivElement>(null);
   const line = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState(false);
+  const lockedRef = useRef(false);
 
   useEffect(() => {
     const prefersReduced = window.matchMedia(
@@ -20,15 +22,34 @@ export default function Loader({ onDone }: { onDone: () => void }) {
       return;
     }
 
-    document.body.style.overflow = "hidden";
+    lockScroll();
+    lockedRef.current = true;
+
+    const release = () => {
+      if (!lockedRef.current) return;
+      lockedRef.current = false;
+      unlockScroll();
+    };
 
     const tl = gsap.timeline({
       onComplete: () => {
-        document.body.style.overflow = "";
+        window.clearTimeout(safety);
+        release();
         setHidden(true);
         onDone();
       },
     });
+
+    // Safety net: if the animation never completes (e.g. the tab was
+    // backgrounded on mobile while the page loaded, which pauses
+    // requestAnimationFrame and stalls GSAP), force the intro to finish
+    // instead of leaving the page permanently locked and unscrollable.
+    const safety = window.setTimeout(() => {
+      tl.kill();
+      release();
+      setHidden(true);
+      onDone();
+    }, 6000);
 
     tl.set(mark.current, { opacity: 0, letterSpacing: "0.6em" })
       .set(line.current, { scaleX: 0 })
@@ -51,8 +72,9 @@ export default function Loader({ onDone }: { onDone: () => void }) {
       });
 
     return () => {
+      window.clearTimeout(safety);
       tl.kill();
-      document.body.style.overflow = "";
+      release();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
