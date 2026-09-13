@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+::selection {
+  background-color: #D4AF37;
+  color: #1A1A1A;
+}
+
+/* Slim luxury scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F4ECE1;
+}
+::-webkit-scrollbar-thumb {
+  background: #0F4C81;
+  border-radius: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-inter);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+}
+
+.hairline-solid {
+  height: 1px;
+  background-color: rgba(26, 26, 26, 0.1);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.container-luxury {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-luxury {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-luxury {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+/* Focus visibility for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #D4AF37;
+  outline-offset: 3px;
+}
+
+/* Gold shimmer text for the loader mark */
+.shimmer-text {
+  background: linear-gradient(90deg, #E8D9C5 25%, #D4AF37 50%, #E8D9C5 75%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.5s linear infinite;
+}
